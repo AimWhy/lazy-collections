@@ -2,11 +2,11 @@ import { reduce } from './'
 
 import { LazyIterable } from './shared-types'
 
-export function toArray<T>() {
+export function toSet<T>() {
   return (data: LazyIterable<T>) => {
-    return reduce<T[], T>((acc, current) => {
-      acc.push(current)
+    return reduce<Set<T>, T>((acc, current) => {
+      acc.add(current)
       return acc
-    }, [])(data)
+    }, new Set<T>())(data)
   }
 }

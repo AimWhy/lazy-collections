@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`should export all the things 1`] = `
-Object {
+{
+  "at": [Function],
   "average": [Function],
   "batch": [Function],
   "chunk": [Function],
@@ -19,6 +20,7 @@ Object {
   "generate": [Function],
   "groupBy": [Function],
   "head": [Function],
+  "includes": [Function],
   "join": [Function],
   "map": [Function],
   "max": [Function],
@@ -26,6 +28,7 @@ Object {
   "min": [Function],
   "partition": [Function],
   "pipe": [Function],
+  "product": [Function],
   "range": [Function],
   "reduce": [Function],
   "reverse": [Function],
@@ -38,6 +41,8 @@ Object {
   "takeWhile": [Function],
   "tap": [Function],
   "toArray": [Function],
+  "toLength": [Function],
+  "toSet": [Function],
   "unique": [Function],
   "wait": [Function],
   "where": [Function],

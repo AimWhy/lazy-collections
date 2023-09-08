@@ -7,9 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/lazy-collections"><img src="https://img.shields.io/npm/v/lazy-collections?style=flat-square"></a>
+  <a href="https://github.com/RobinMalfait/lazy-collections/actions"><img src="https://img.shields.io/github/actions/workflow/status/RobinMalfait/lazy-collections/ci.yml?branch=main&style=flat-square"></a>
+  <a href="https://www.npmjs.com/package/lazy-collections"><img src="https://img.shields.io/npm/dt/lazy-collections?style=flat-square"></a>
   <a href="https://www.npmjs.com/package/lazy-collections"><img src="https://img.shields.io/npm/dm/lazy-collections?style=flat-square"></a>
-  <a href="https://github.com/RobinMalfait/lazy-collections/actions"><img src="https://img.shields.io/github/workflow/status/RobinMalfait/lazy-collections/Node%20CI/master?style=flat-square"></a>
+  <a href="https://www.npmjs.com/package/lazy-collections"><img src="https://img.shields.io/npm/v/lazy-collections?style=flat-square"></a>
+  <a href="https://github.com/RobinMalfait/lazy-collections/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/lazy-collections.svg?style=flat-square" alt="License"></a>
 </p>
 
 ---
@@ -47,15 +49,18 @@ program(range(0, 1000000))
     - [`compose`](#compose)
     - [`pipe`](#pipe)
   - [Known array functions](#known-array-functions)
+    - [`at`](#at)
     - [`concat`](#concat)
     - [`every`](#every)
     - [`filter`](#filter)
     - [`find`](#find)
     - [`findIndex`](#findindex)
     - [`flatMap`](#flatMap)
+    - [`includes`](#includes)
     - [`join`](#join)
     - [`map`](#map)
     - [`reduce`](#reduce)
+    - [`replace`](#replace)
     - [`reverse`](#reverse)
     - [`some`](#some)
     - [`sort`](#sort)
@@ -64,6 +69,7 @@ program(range(0, 1000000))
     - [`max`](#max)
     - [`min`](#min)
     - [`sum`](#sum)
+    - [`product`](#product)
   - [Utilities](#utilities)
     - [`batch`](#batch)
     - [`chunk`](#chunk)
@@ -81,6 +87,8 @@ program(range(0, 1000000))
     - [`takeWhile`](#takewhile)
     - [`tap`](#tap)
     - [`toArray`](#toarray)
+    - [`toLength`](#tolength)
+    - [`toSet`](#toset)
     - [`unique`](#unique)
     - [`wait`](#wait)
     - [`where`](#where)
@@ -189,6 +197,48 @@ program()
 
 ### Known array functions
 
+#### `at`
+
+[Table of contents](#table-of-contents)
+
+Returns the value at the given index.
+
+```js
+import { pipe, at } from 'lazy-collections'
+
+let program = pipe(at(2))
+
+program([1, 2, 3, 4])
+
+// 3
+```
+
+You can also pass a negative index to `at` to count back from the end of the array or iterator.
+
+> **Warning**: Performance may be degraded because it has to exhaust the full iterator before it can count backwards!
+
+```js
+import { pipe, at } from 'lazy-collections'
+
+let program = pipe(at(-2))
+
+program([1, 2, 3, 4])
+
+// 3
+```
+
+If a value can not be found at the given index, then `undefined` will be returned.
+
+```js
+import { pipe, at } from 'lazy-collections'
+
+let program = pipe(at(12))
+
+program([1, 2, 3, 4])
+
+// undefined
+```
+
 #### `concat`
 
 [Table of contents](#table-of-contents)
@@ -264,7 +314,7 @@ import { pipe, findIndex } from 'lazy-collections'
 let program = pipe(findIndex((x) => x === 2))
 
 program([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-// 2
+// 1
 ```
 
 #### `flatMap`
@@ -283,6 +333,36 @@ let program = pipe(
 
 program([1, 2, 3])
 // [ 2, 4, 4, 8, 6, 12 ]
+```
+
+#### `includes`
+
+[Table of contents](#table-of-contents)
+
+Check if a value is included in an array or iterator.
+
+```js
+import { pipe, includes } from 'lazy-collections'
+
+let program = pipe(includes(1))
+
+program([1, 2, 3, 4])
+
+// true
+```
+
+Each value is compared using `Object.is`. This will guarantee that edge cases with `NaN` also work the same as `Array.prototype.includes`.
+
+Optionally, you can start searching from a positive index:
+
+```js
+import { pipe, includes } from 'lazy-collections'
+
+let program = pipe(includes(1, 1))
+
+program([1, 2, 3, 4])
+
+// false
 ```
 
 #### `join`
@@ -309,6 +389,26 @@ let program = pipe(join(' '))
 
 program(['foo', 'bar', 'baz'])
 // 'foo bar baz'
+```
+
+#### `toLength`
+
+[Table of contents](#table-of-contents)
+
+> **Warning**: Performance warning, it has to exhaust the full iterator before it can calculate length!
+
+Get the length of an array or iterator.
+
+```js
+import { pipe, toLength, filter } from 'lazy-collections'
+
+let program = pipe(
+  filter((x) => x % 2 === 0),
+  toLength()
+)
+
+program([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+// 5
 ```
 
 #### `map`
@@ -344,9 +444,24 @@ program([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 // 55
 ```
 
+#### `replace`
+
+[Table of contents](#table-of-contents)
+
+Replace an item at a given index with a new value.
+
+```js
+import { pipe, replace } from 'lazy-collections'
+
+let program = pipe(replace(2, 42))
+
+program([1, 2, 3, 4])
+// [ 1, 2, 42, 4 ]
+```
+
 #### `reverse`
 
-> **Warning**: Performance warning, it has to exhaust the full iterator before it can reverse it!
+> **Warning**: Performance may be degraded because it has to exhaust the full iterator before it can reverse it!
 
 [Table of contents](#table-of-contents)
 
@@ -378,7 +493,7 @@ program([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 #### `sort`
 
-> **Warning**: Performance warning, it has to exhaust the full iterator before it can sort it!
+> **Warning**: Performance may be degraded because it has to exhaust the full iterator before it can sort it!
 
 [Table of contents](#table-of-contents)
 
@@ -395,7 +510,7 @@ let program = pipe(
 )
 
 program()
-// [ 11, 18, 24, 27, 83 ] 
+// [ 11, 18, 24, 27, 83 ]
 ```
 
 ### Math / Statistics
@@ -460,6 +575,21 @@ let program = pipe(sum())
 
 program([1, 1, 2, 3, 2, 4, 5])
 // 18
+```
+
+#### `product`
+
+[Table of contents](#table-of-contents)
+
+Should multiply an array or iterator.
+
+```js
+import { pipe, product } from 'lazy-collections'
+
+let program = pipe(product())
+
+program([1, 1, 2, 3, 2, 4, 5])
+// 240
 ```
 
 ### Utilities
@@ -708,7 +838,7 @@ import { pipe, range, take, toArray } from 'lazy-collections'
 let program = pipe(range(0, 10), take(3), toArray())
 
 program()
-// [ 1, 2, 3 ]
+// [ 0, 1, 2 ]
 ```
 
 #### `takeWhile`
@@ -771,6 +901,21 @@ let program = pipe(range(0, 10), toArray())
 
 program()
 // [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+```
+
+#### `toSet`
+
+[Table of contents](#table-of-contents)
+
+Converts an array or an iterator to Set.
+
+```js
+import { pipe, range, toSet } from 'lazy-collections'
+
+let program = pipe(range(0, 10), toSet())
+
+program()
+// Set (11) { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
 ```
 
 #### `unique`

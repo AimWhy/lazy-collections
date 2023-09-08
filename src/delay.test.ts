@@ -1,9 +1,4 @@
-import { pipe } from './pipe'
-import { range } from './range'
-import { delay } from './delay'
-import { map } from './map'
-import { every } from './every'
-import { tap } from './tap'
+import { pipe, range, delay, map, every, tap } from './'
 
 it('should delay each value by 50ms', async () => {
   let DELAY = 50
@@ -32,7 +27,7 @@ it('should delay each value by 50ms', async () => {
 
     // Ensure that each item took at least DELAY ms to be processed, and can't exceed DELAY * 2.
     // This also ensures that they are truly handled sequentially.
-    every((current, i) => current >= DELAY * i && current <= DELAY * (i + 1))
+    every((current: number, i) => current >= DELAY * i && current <= DELAY * (i + 1))
   )
 
   let result = await program()
